@@ -1,3 +1,6 @@
+# NOTE: This is a simple local/demo setup.
+# For production, use a secure secret manager and a persistent storage backend
+# instead of committing credentials or relying on an ephemeral volume.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,12 +40,13 @@ spec:
               mountPath: /data/db
       volumes:
         - name: mongo-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: mongo-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo
+  name: mongo-service
   labels:
     app: mongo
 spec:
@@ -54,3 +58,14 @@ spec:
       targetPort: 27017
       name: mongo
   type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
