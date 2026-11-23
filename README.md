@@ -1,6 +1,6 @@
 # k8-for-mongoDB
 
-This repository contains a minimal Kubernetes setup for MongoDB and Mongo Express.
+This repository contains a minimal Kubernetes setup for MongoDB and Mongo Express in the `mongo-demo` namespace.
 
 ## Prerequisites
 
@@ -9,9 +9,10 @@ This repository contains a minimal Kubernetes setup for MongoDB and Mongo Expres
 
 ## Deploy
 
-Apply the secret first, then the database, then the Mongo Express resources:
+Create the namespace, then apply all project resources:
 
 ```bash
+kubectl apply -f mongo-namespace.yaml
 kubectl apply -f mongo-secret.yaml
 kubectl apply -f mongo-deployment.yaml
 kubectl apply -f mongo-express-configMap.yaml
@@ -21,28 +22,35 @@ kubectl apply -f mongo-express-deployment.yaml
 ## Verify
 
 ```bash
-kubectl get pods
-kubectl get svc
-kubectl get pvc
-kubectl describe deployment mongo
-kubectl describe deployment mongo-express
+kubectl get pods -n mongo-demo
+kubectl get svc -n mongo-demo
+kubectl get pvc -n mongo-demo
+kubectl describe deployment mongo -n mongo-demo
+kubectl describe deployment mongo-express -n mongo-demo
 ```
 
 ## Access
 
 - MongoDB is exposed through the `mongo-service` service on port `27017`
-- Mongo Express is exposed through the `mongo-express-service` service on port `8081`
+- Mongo Express is exposed through the `mongo-express-service` NodePort service on port `8081`
 
-If you are using a local cluster such as Minikube or Docker Desktop, you can open the Mongo Express UI through the service port or use port-forwarding:
+With Minikube:
 
 ```bash
-kubectl port-forward service/mongo-express-service 8081:8081
+minikube service mongo-express-service -n mongo-demo
 ```
 
-Then open:
+Mongo Express UI credentials:
 
-```text
-http://localhost:8081
+- Username: `admin`
+- Password: `pass`
+
+## Remove
+
+Delete the namespace to remove the project resources and data:
+
+```bash
+kubectl delete namespace mongo-demo
 ```
 
 ## Notes
