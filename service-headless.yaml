@@ -1,0 +1,20 @@
+# Headless Service example
+# clusterIP: None disables virtual-IP load balancing.
+# DNS discovery can return the addresses of the matching Pods directly.
+# This pattern is commonly used with StatefulSets.
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-headless
+  namespace: mongo-demo
+  labels:
+    app: database
+spec:
+  clusterIP: None
+  selector:
+    app: database
+  ports:
+    - name: database
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

@@ -1,0 +1,19 @@
+# ClusterIP example
+# This Service is reachable only from inside the Kubernetes cluster.
+# It routes traffic to Pods with the label app: internal-api.
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-api
+  namespace: mongo-demo
+  labels:
+    app: internal-api
+spec:
+  type: ClusterIP
+  selector:
+    app: internal-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
